@@ -45,7 +45,7 @@ tail -n +2 data.csv | while IFS=',' read -r worker data duration
 do
 printf -v Item '{ "worker_id": "'%s'", "date_1_start": "'%s'", "duration": "'%s'" }' "$worker" "$data" "$duration"
 #curl -H "Content-Type:application/json" -X POST -d "$Item" $2
-sudo docker exec -t t2-api wget --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset > /dev/null
+sudo docker exec -t t2-api wget --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset
 
 done
 printf "[$(date +%T)] Ending to add items in MySQL  \n\n"

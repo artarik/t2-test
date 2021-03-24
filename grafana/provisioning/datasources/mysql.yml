@@ -1,0 +1,30 @@
+# config file version
+apiVersion: 1
+
+datasources:
+ - name: MYSQL-provis
+   type: mysql
+   url: t2-mysql:3306
+   database: t2-docker
+   basicAuth: false
+   user: root
+   secureJsonData:
+     password: toor_pass
+
+#   password: toor_pass
+#   user: root
+  
+
+#apiVersion: 1
+#
+#datasources:
+#  - name: MySQL
+#    type: mysql
+#    url: localhost:3306
+#    database: grafana
+#    user: grafana
+#    password: password
+#    jsonData:
+#      maxOpenConns: 0         # Grafana v5.4+
+#      maxIdleConns: 2         # Grafana v5.4+
+#      connMaxLifetime: 14400  # Grafana v5.4+

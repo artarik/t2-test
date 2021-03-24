@@ -1,0 +1,68 @@
+version: '2'
+services:
+  t2-mysql:
+    container_name: t2-mysql
+    image: mysql:5.7
+    ports:
+      - "4306:3306"
+    expose:
+      - '4306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'toor_pass'
+      MYSQL_ROOT_HOST: '%'
+    restart: always
+    #command: --default-authentication-plugin=mysql_native_password 
+    networks:
+      - t2-network
+    volumes:
+#      - /app/mysql/t2/t2-data:/var/lib/mysql
+      - ./t2-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: out=$$(mysqladmin ping -h localhost -uroot --password=toor_pass 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
+      interval: 10s
+      timeout: 1s
+      retries: 60
+       
+  t2-api:
+    container_name: t2-api
+    image: markuman/xmysql
+    environment:
+      DATABASE_HOST: 't2-mysql'
+      DATABASE_USER: 'root'
+      DATABASE_PASSWORD: 'toor_pass'
+      DATABASE_NAME: 't2-docker'
+    ports:
+      - "3002:80"
+    networks:
+      - t2-network
+    expose:
+      - '3002'
+    restart: always
+    depends_on:
+      t2-mysql:
+        condition: service_healthy
+
+
+  grafana:
+    container_name: t2-grafana
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    networks:
+      - t2-network
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=MYPASSWORT
+    depends_on:
+      t2-mysql:
+        condition: service_healthy
+
+
+networks:
+  t2-network:
+    driver: bridge
+
+volumes:
+  db-data:

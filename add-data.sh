@@ -32,15 +32,15 @@ printf '\nDocker Compose installed successfully\n\n'
 
 ## Start Containers
 
-docker-compose -f t2-compose.yml up -d
+sudo docker-compose -f t2-compose.yml up -d
 
 
 ## Add Data to Mysql
-tail -n +2 $1 | while IFS=',' read -r worker data duration
+tail -n +2 main.csv | while IFS=',' read -r worker data duration
 do
 printf -v Item '{ "worker_id": "'%s'", "date_1_start": "'%s'", "duration": "'%s'" }' "$worker" "$data" "$duration"
 #curl -H "Content-Type:application/json" -X POST -d "$Item" $2
-docker exec -t t2-api wget -O- --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset
+sudo docker exec -t t2-api wget -O- --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset
 
 done
 printf '\nFinish\n\n'

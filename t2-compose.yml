@@ -47,14 +47,14 @@ services:
     container_name: t2-grafana
     image: grafana/grafana
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     networks:
       - t2-network
     restart: always
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=MYPASSWORT
+      - GF_SECURITY_ADMIN_PASSWORD=admin_pass
     depends_on:
       t2-mysql:
         condition: service_healthy

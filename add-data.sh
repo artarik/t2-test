@@ -41,12 +41,10 @@ sudo docker-compose -f t2-compose.yml up -d
 printf "[$(date +%T)] Starting to add items in MySQL \n"
 sleep 1
 ## Add Data to Mysql
-tail -n +2 data.csv | while IFS=',' read -r worker data duration
-do
-printf -v Item '{ "worker_id": "'%s'", "date_1_start": "'%s'", "duration": "'%s'" }' "$worker" "$data" "$duration"
+tail -n +2 data.csv | while IFS=',' read -r worker data duration;
+do printf -v Item '{ "worker_id": "'%s'", "date_1_start": "'%s'", "duration": "'%s'" }' "$worker" "$data" "$duration"
 #curl -H "Content-Type:application/json" -X POST -d "$Item" $2
-sudo docker exec -t t2-api wget --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset
-done
+sudo docker exec -t t2-api wget -O- --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset; done
 printf "[$(date +%T)] Ending to add items in MySQL  \n\n"
 
 

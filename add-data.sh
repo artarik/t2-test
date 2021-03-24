@@ -1,8 +1,9 @@
 #!/bin/bash
 
 ## REMOVE CRLF
-
 perl -pe 's/\r$//g' < main.csv > data.csv
+
+SERVER_IP=$(hostname -I)
 
 ##Install docker
 set -o errexit
@@ -27,10 +28,8 @@ sleep 5
 # Docker Compose
 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-
-#sudo wget --output-document=/usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/$(wget --quiet --output-document=- https://api.github.com/repos/docker/compose/releases/latest | grep --perl-regexp --only-matching '"tag_name": "\K.*?(?=")')/run.sh"
 sudo chmod +x /usr/local/bin/docker-compose
-sudo wget --output-document=/etc/bash_completion.d/docker-compose "https://raw.githubusercontent.com/docker/compose/$(docker-compose version --short)/contrib/completion/bash/docker-compose"
+
 printf '\nDocker Compose installed successfully\n\n'
 
 
@@ -38,13 +37,13 @@ printf '\nDocker Compose installed successfully\n\n'
 
 sudo docker-compose -f t2-compose.yml up -d
 
-printf "[$(date +%T)] Starting to add items in MySQL \n"
-sleep 1
 ## Add Data to Mysql
+IP=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' t2-api)
+printf "\n[$(date +%T)] Starting to add items in MySQL \n"
 tail -n +2 data.csv | while IFS=',' read -r worker data duration;
 do printf -v Item '{ "worker_id": "'%s'", "date_1_start": "'%s'", "duration": "'%s'" }' "$worker" "$data" "$duration"
-#curl -H "Content-Type:application/json" -X POST -d "$Item" $2
-sudo docker exec -t t2-api wget -O- --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset; done
+curl -H "Content-Type:application/json" -X POST -d "$Item" http://$IP/api/dataset > /dev/null 2>&1
+#sudo docker exec -t t2-api wget -O- --post-data="$Item" --header='Content-Type:application/json' http://127.0.0.1/api/dataset
+done
 printf "[$(date +%T)] Ending to add items in MySQL  \n\n"
-
-
+printf "\nFinish. Go to WEB on $SERVER_IP and port 3001\n\n"

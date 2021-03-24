@@ -38,7 +38,8 @@ printf '\nDocker Compose installed successfully\n\n'
 
 sudo docker-compose -f t2-compose.yml up -d
 
-printf "[$(date +%T)] Starting to add items in MySQL  \n\n"
+printf "[$(date +%T)] Starting to add items in MySQL \n"
+sleep 1
 ## Add Data to Mysql
 tail -n +2 data.csv | while IFS=',' read -r worker data duration
 do

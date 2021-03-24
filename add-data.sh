@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## REMOVE CRLF
+
+perl -pe 's/\r$//g' < main.csv > data.csv
+
 ##Install docker
 set -o errexit
 set -o nounset
@@ -36,7 +40,7 @@ sudo docker-compose -f t2-compose.yml up -d
 
 
 ## Add Data to Mysql
-tail -n +2 main.csv | while IFS=',' read -r worker data duration
+tail -n +2 data.csv | while IFS=',' read -r worker data duration
 do
 printf -v Item '{ "worker_id": "'%s'", "date_1_start": "'%s'", "duration": "'%s'" }' "$worker" "$data" "$duration"
 #curl -H "Content-Type:application/json" -X POST -d "$Item" $2

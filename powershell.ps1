@@ -1,10 +1,35 @@
-#1.       Написать запрос к ya.ru , в случае если ответ не 200, отправлять письмо произвольного содержания на произвольную почту. if ((Invoke-WebRequest -Uri "https://ya.ru").StatusCode -ne 200){Send-SmtpMail -SmtpHost "smtp.domain.com" -PortNumber "25" -To "username@domain.com" -Body "Status Code != 200"  -From "from@domain.com"}#2.      Нужно сделать несколько файлов (txt/PS) в директории C:\Scripts, у некоторых прописать в содержимом "Enable-ADAccount". В директории найти все скрипты содержащие командлет Enable-ADAccount.if (-not (Test-Path "C:\Scripts")){    New-Item -Path "C:\Scripts" -ItemType Directory}Set-Location "C:\Scripts"$array = 1..(Get-Random -Minimum 5 -Maximum 20) foreach($obj in $array) {    $tmpfilename = ([System.IO.Path]::GetRandomFileName() -replace "\..+", (Get-Random -InputObject ".txt", ".ps1"))    if ([bool]((Get-Random -Minimum 1 -Maximum 4) % 2)){        Add-Content -Value "Enable-ADAccount" -Path $tmpfilename    }else{        $null = New-Item -Path $tmpfilename -ItemType File    }} $mathces = Get-ChildItem -Filter "*.ps1" | Select-String "Enable-AdAccount" -List | Select Path $mathces.Path $mathces.Count  <# 3.       Существует 3 сервера со скриптами:
-•         Server-test-01
-•         Server-test-02
-•         Server-test-03
-Путь к скриптам C:\Scripts\*, у некоторых скриптов в том же каталоге (рядом) может быть .log –файл имя которого полностью совпадает с именем скрипта
-Необходимо удаленно, со своего компьютера, произвести поиск аналогично первому заданию на всех 3х серверах, результаты у себя выгрузить в .csv – файл вида:
-Имя сервера | полный путь к скрипту | Логирование (да/нет). Кодировка не важна.
+#1.       РќР°РїРёСЃР°С‚СЊ Р·Р°РїСЂРѕСЃ Рє ya.ru , РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РѕС‚РІРµС‚ РЅРµ 200, РѕС‚РїСЂР°РІР»СЏС‚СЊ РїРёСЃСЊРјРѕ РїСЂРѕРёР·РІРѕР»СЊРЅРѕРіРѕ СЃРѕРґРµСЂР¶Р°РЅРёСЏ РЅР° РїСЂРѕРёР·РІРѕР»СЊРЅСѓСЋ РїРѕС‡С‚Сѓ. 
+
+if ((Invoke-WebRequest -Uri "https://ya.ru").StatusCode -ne 200){Send-SmtpMail -SmtpHost "smtp.domain.com" -PortNumber "25" -To "username@domain.com" -Body "Status Code != 200"  -From "from@domain.com"}
+
+#2.      РќСѓР¶РЅРѕ СЃРґРµР»Р°С‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ С„Р°Р№Р»РѕРІ (txt/PS) РІ РґРёСЂРµРєС‚РѕСЂРёРё C:\Scripts, Сѓ РЅРµРєРѕС‚РѕСЂС‹С… РїСЂРѕРїРёСЃР°С‚СЊ РІ СЃРѕРґРµСЂР¶РёРјРѕРј "Enable-ADAccount". Р’ РґРёСЂРµРєС‚РѕСЂРёРё РЅР°Р№С‚Рё РІСЃРµ СЃРєСЂРёРїС‚С‹ СЃРѕРґРµСЂР¶Р°С‰РёРµ РєРѕРјР°РЅРґР»РµС‚ Enable-ADAccount.
+
+if (-not (Test-Path "C:\Scripts")){
+    New-Item -Path "C:\Scripts" -ItemType Directory
+}
+
+Set-Location "C:\Scripts"
+$array = 1..(Get-Random -Minimum 5 -Maximum 20) 
+foreach($obj in $array) {
+    $tmpfilename = ([System.IO.Path]::GetRandomFileName() -replace "\..+", (Get-Random -InputObject ".txt", ".ps1"))
+    if ([bool]((Get-Random -Minimum 1 -Maximum 4) % 2)){
+        Add-Content -Value "Enable-ADAccount" -Path $tmpfilename
+    }else{
+        $null = New-Item -Path $tmpfilename -ItemType File
+    }
+}
+ $mathces = Get-ChildItem -Filter "*.ps1" | Select-String "Enable-AdAccount" -List | Select Path
+ $mathces.Path
+ $mathces.Count
+ 
+ <#
+ 3.       РЎСѓС‰РµСЃС‚РІСѓРµС‚ 3 СЃРµСЂРІРµСЂР° СЃРѕ СЃРєСЂРёРїС‚Р°РјРё:
+вЂў         Server-test-01
+вЂў         Server-test-02
+вЂў         Server-test-03
+РџСѓС‚СЊ Рє СЃРєСЂРёРїС‚Р°Рј C:\Scripts\*, Сѓ РЅРµРєРѕС‚РѕСЂС‹С… СЃРєСЂРёРїС‚РѕРІ РІ С‚РѕРј Р¶Рµ РєР°С‚Р°Р»РѕРіРµ (СЂСЏРґРѕРј) РјРѕР¶РµС‚ Р±С‹С‚СЊ .log вЂ“С„Р°Р№Р» РёРјСЏ РєРѕС‚РѕСЂРѕРіРѕ РїРѕР»РЅРѕСЃС‚СЊСЋ СЃРѕРІРїР°РґР°РµС‚ СЃ РёРјРµРЅРµРј СЃРєСЂРёРїС‚Р°
+РќРµРѕР±С…РѕРґРёРјРѕ СѓРґР°Р»РµРЅРЅРѕ, СЃРѕ СЃРІРѕРµРіРѕ РєРѕРјРїСЊСЋС‚РµСЂР°, РїСЂРѕРёР·РІРµСЃС‚Рё РїРѕРёСЃРє Р°РЅР°Р»РѕРіРёС‡РЅРѕ РїРµСЂРІРѕРјСѓ Р·Р°РґР°РЅРёСЋ РЅР° РІСЃРµС… 3С… СЃРµСЂРІРµСЂР°С…, СЂРµР·СѓР»СЊС‚Р°С‚С‹ Сѓ СЃРµР±СЏ РІС‹РіСЂСѓР·РёС‚СЊ РІ .csv вЂ“ С„Р°Р№Р» РІРёРґР°:
+РРјСЏ СЃРµСЂРІРµСЂР° | РїРѕР»РЅС‹Р№ РїСѓС‚СЊ Рє СЃРєСЂРёРїС‚Сѓ | Р›РѕРіРёСЂРѕРІР°РЅРёРµ (РґР°/РЅРµС‚). РљРѕРґРёСЂРѕРІРєР° РЅРµ РІР°Р¶РЅР°.
 #>
 
 
@@ -12,47 +37,47 @@ Invoke-Command 'Server-test-01', 'Server-test-02', 'Server-test-03' -ScriptBlock
     Get-ChildItem -Path C:\Scripts\ -Filter "*.ps1" | Select-String "Enable-AdAccount" -List | Select-Object @{L="Path";E={$PSItem.Path}}, @{
         label='log' ;expression={
             if(Test-Path($PSItem.Path -replace "\.ps1", ".log")){
-                "Да"
+                "Р”Р°"
             }else{
-                "Нет"
+                "РќРµС‚"
             }
         }
     }
-} | Select-Object @{L = "Имя Сервера"; E={$PSItem.PSComputerName}}, `
-                  @{L = "полный путь к скрипту"; E={$PSItem.Path}}, `
-                  @{L = "Логирование (да/нет)"; E={$PSItem.log}} | Export-Csv -Path c:\temp\export.csv -Encoding UTF8 -NoTypeInformation
+} | Select-Object @{L = "РРјСЏ РЎРµСЂРІРµСЂР°"; E={$PSItem.PSComputerName}}, `
+                  @{L = "РїРѕР»РЅС‹Р№ РїСѓС‚СЊ Рє СЃРєСЂРёРїС‚Сѓ"; E={$PSItem.Path}}, `
+                  @{L = "Р›РѕРіРёСЂРѕРІР°РЅРёРµ (РґР°/РЅРµС‚)"; E={$PSItem.log}} | Export-Csv -Path c:\temp\export.csv -Encoding UTF8 -NoTypeInformation
 
 
 
 
 <#
-4.       Аналогично прошлому заданию необходимо добавить использование credentials,
-Логин и пароль произвольные, однако, хранить их в открытом виде в скрипте нельзя. (использование планировщика не предполагается)
+4.       РђРЅР°Р»РѕРіРёС‡РЅРѕ РїСЂРѕС€Р»РѕРјСѓ Р·Р°РґР°РЅРёСЋ РЅРµРѕР±С…РѕРґРёРјРѕ РґРѕР±Р°РІРёС‚СЊ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ credentials,
+Р›РѕРіРёРЅ Рё РїР°СЂРѕР»СЊ РїСЂРѕРёР·РІРѕР»СЊРЅС‹Рµ, РѕРґРЅР°РєРѕ, С…СЂР°РЅРёС‚СЊ РёС… РІ РѕС‚РєСЂС‹С‚РѕРј РІРёРґРµ РІ СЃРєСЂРёРїС‚Рµ РЅРµР»СЊР·СЏ. (РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РїР»Р°РЅРёСЂРѕРІС‰РёРєР° РЅРµ РїСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ)
  
-(задача на "хранение кредов")
+(Р·Р°РґР°С‡Р° РЅР° "С…СЂР°РЅРµРЅРёРµ РєСЂРµРґРѕРІ")
 #>
 $creds = Import-Clixml ~\creds.xml
 Invoke-Command 'Server-test-01', 'Server-test-02', 'Server-test-03' -ScriptBlock {
     Get-ChildItem -Path C:\Scripts\ -Filter "*.ps1" | Select-String "Enable-AdAccount" -List | Select-Object @{L="Path";E={$PSItem.Path}}, @{
         label='log' ;expression={
             if(Test-Path($PSItem.Path -replace "\.ps1", ".log")){
-                "Да"
+                "Р”Р°"
             }else{
-                "Нет"
+                "РќРµС‚"
             }
         }
     }
-} -Credential $creds | Select-Object @{L = "Имя Сервера"; E={$PSItem.PSComputerName}}, `
-                                     @{L = "полный путь к скрипту"; E={$PSItem.Path}}, `
-                                     @{L = "Логирование (да/нет)"; E={$PSItem.log}} | Export-Csv -Path c:\temp\export.csv -Encoding UTF8 -NoTypeInformation
+} -Credential $creds | Select-Object @{L = "РРјСЏ РЎРµСЂРІРµСЂР°"; E={$PSItem.PSComputerName}}, `
+                                     @{L = "РїРѕР»РЅС‹Р№ РїСѓС‚СЊ Рє СЃРєСЂРёРїС‚Сѓ"; E={$PSItem.Path}}, `
+                                     @{L = "Р›РѕРіРёСЂРѕРІР°РЅРёРµ (РґР°/РЅРµС‚)"; E={$PSItem.log}} | Export-Csv -Path c:\temp\export.csv -Encoding UTF8 -NoTypeInformation
 
 <#
  
-5.       Необходимо сделать 2 группы в AD, наполнить произвольными УЗ.  Перенести участников группы 1 в группу2, исключая учетные записи из массива login-ов $exclude. Массив $exclude сделать произвольный.
+5.       РќРµРѕР±С…РѕРґРёРјРѕ СЃРґРµР»Р°С‚СЊ 2 РіСЂСѓРїРїС‹ РІ AD, РЅР°РїРѕР»РЅРёС‚СЊ РїСЂРѕРёР·РІРѕР»СЊРЅС‹РјРё РЈР—.  РџРµСЂРµРЅРµСЃС‚Рё СѓС‡Р°СЃС‚РЅРёРєРѕРІ РіСЂСѓРїРїС‹ 1 РІ РіСЂСѓРїРїСѓ2, РёСЃРєР»СЋС‡Р°СЏ СѓС‡РµС‚РЅС‹Рµ Р·Р°РїРёСЃРё РёР· РјР°СЃСЃРёРІР° login-РѕРІ $exclude. РњР°СЃСЃРёРІ $exclude СЃРґРµР»Р°С‚СЊ РїСЂРѕРёР·РІРѕР»СЊРЅС‹Р№.
  
-[array]$exclude=@(“ivan.ivanov”,
-“artem.artemov”,
-….) 
+[array]$exclude=@(вЂњivan.ivanovвЂќ,
+вЂњartem.artemovвЂќ,
+вЂ¦.) 
 #>
 
 
@@ -79,9 +104,9 @@ $users | select -Last 10  |%{ Add-ADGroupMember -Identity $group2 -Members $PSIt
 
 
 <#
-6.       Написать функцию рассылки писем работающим внештатным сотрудника (свойство учетной записи Staff равно $False), где тело письма это развернутый .docx файл,
-Файлы для рассылки лежат в подкаталоге текущей директории (каталог со скриптом/attachments) и именуются следующим образом email.docx
-(то есть файл не должен быть вложением)
+6.       РќР°РїРёСЃР°С‚СЊ С„СѓРЅРєС†РёСЋ СЂР°СЃСЃС‹Р»РєРё РїРёСЃРµРј СЂР°Р±РѕС‚Р°СЋС‰РёРј РІРЅРµС€С‚Р°С‚РЅС‹Рј СЃРѕС‚СЂСѓРґРЅРёРєР° (СЃРІРѕР№СЃС‚РІРѕ СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё Staff СЂР°РІРЅРѕ $False), РіРґРµ С‚РµР»Рѕ РїРёСЃСЊРјР° СЌС‚Рѕ СЂР°Р·РІРµСЂРЅСѓС‚С‹Р№ .docx С„Р°Р№Р»,
+Р¤Р°Р№Р»С‹ РґР»СЏ СЂР°СЃСЃС‹Р»РєРё Р»РµР¶Р°С‚ РІ РїРѕРґРєР°С‚Р°Р»РѕРіРµ С‚РµРєСѓС‰РµР№ РґРёСЂРµРєС‚РѕСЂРёРё (РєР°С‚Р°Р»РѕРі СЃРѕ СЃРєСЂРёРїС‚РѕРј/attachments) Рё РёРјРµРЅСѓСЋС‚СЃСЏ СЃР»РµРґСѓСЋС‰РёРј РѕР±СЂР°Р·РѕРј email.docx
+(С‚Рѕ РµСЃС‚СЊ С„Р°Р№Р» РЅРµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РІР»РѕР¶РµРЅРёРµРј)
 #> 
 
 function Send-MailToOut{
@@ -108,7 +133,8 @@ foreach ($user in $users){
 
 
 
-#7.       Написать рекурсивную функцию поиска всех подчиненных указанного руководителя (по ФИО), необходимо учитывать только работающих сотрудников. function Get-UniqueManagerItem{
+#7.       РќР°РїРёСЃР°С‚СЊ СЂРµРєСѓСЂСЃРёРІРЅСѓСЋ С„СѓРЅРєС†РёСЋ РїРѕРёСЃРєР° РІСЃРµС… РїРѕРґС‡РёРЅРµРЅРЅС‹С… СѓРєР°Р·Р°РЅРЅРѕРіРѕ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ (РїРѕ Р¤РРћ), РЅРµРѕР±С…РѕРґРёРјРѕ СѓС‡РёС‚С‹РІР°С‚СЊ С‚РѕР»СЊРєРѕ СЂР°Р±РѕС‚Р°СЋС‰РёС… СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ. 
+function Get-UniqueManagerItem{
     
     [CmdletBinding()]
         param(
